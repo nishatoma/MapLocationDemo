@@ -4,6 +4,8 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -13,6 +15,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -21,6 +24,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -84,6 +91,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.clear();
                 mMap.addMarker(new MarkerOptions().position(sydney).title("Markerrrr"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
+                //We can also do a reverse geo location
+                //i.e get the address from coordinates
+                //Locale is simply a format for the address.
+                Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+                //Then we create a list of addresses
+                try {
+                    //We only need one result.
+                    List<Address> addressList = geocoder.getFromLocation(location.getLatitude(),
+                            location.getLongitude(), 1);
+                    //check to see if we got something back
+                    if (addressList != null && addressList.size() > 0) {
+                        Address add = addressList.get(0);
+                        String text = "";
+                        if (add.getSubThoroughfare() != null) {
+                            text += add.getSubThoroughfare() + ", ";
+                        }
+                        if (add.getThoroughfare() != null) {
+                            text += add.getThoroughfare() + ", ";
+                        }
+                        if (add.getLocality() != null) {
+                            text += add.getLocality() + ", ";
+                        }
+                        if (add.getCountryName() != null){
+                            text += add.getCountryName() + ".";
+                        }
+                        Toast.makeText(MapsActivity.this, text, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (IOException e) {
+                    System.out.println("No such address!");
+                }
             }
 
             @Override
