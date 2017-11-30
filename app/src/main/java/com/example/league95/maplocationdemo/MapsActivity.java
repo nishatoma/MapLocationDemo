@@ -152,7 +152,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 ActivityCompat.requestPermissions(this,
                         new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             } else {
-                //We already have permission and just get the location.
+                //We already have permission and just get the location..
                 locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER,
                         0, 0, locationListener);
 
